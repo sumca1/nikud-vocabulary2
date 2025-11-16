@@ -8,26 +8,41 @@ import sys
 
 def add_nikud_dicta(text):
     """הוספת ניקוד באמצעות Dicta API"""
-    url = "https://nakdan-5-0.loadbalancer.dicta.org.il/addnikud"
+    urls = [
+        "https://nakdan-5-2.loadbalancer.dicta.org.il/addnikud",
+        "https://nakdan-5-1.loadbalancer.dicta.org.il/addnikud", 
+        "https://nakdan-5-0.loadbalancer.dicta.org.il/addnikud",
+    ]
     
-    try:
-        response = requests.post(
-            url,
-            json={"data": text, "genre": "modern"},
-            headers={"Content-Type": "application/json"},
-            timeout=30
-        )
-        
-        if response.status_code == 200:
-            result = response.json()
-            return result.get('data', text)
-        else:
-            print(f"Error: {response.status_code}", file=sys.stderr)
-            return None
+    for url in urls:
+        try:
+            response = requests.post(
+                url,
+                json={"data": text, "genre": "modern"},
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                timeout=30
+            )
             
-    except Exception as e:
-        print(f"Exception: {str(e)}", file=sys.stderr)
-        return None
+            if response.status_code == 200:
+                content_type = response.headers.get('content-type', '')
+                if 'application/json' in content_type:
+                    result = response.json()
+                    return result.get('data', text)
+                else:
+                    print(f"Not JSON from {url}: {content_type}", file=sys.stderr)
+                    continue
+            else:
+                print(f"Error {response.status_code} from {url}", file=sys.stderr)
+                continue
+                
+        except Exception as e:
+            print(f"Exception from {url}: {str(e)}", file=sys.stderr)
+            continue
+    
+    return None
 
 
 def process_vocabulary():
