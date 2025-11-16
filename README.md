@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Nikud Vocabulary Project
 
 מילון שמות חסידיים עם ניקוד אוטומטי באמצעות Dicta API
@@ -31,3 +32,7 @@ cp vocabulary_expanded_nikud.txt ../your-local-project/
 
 - ✅ 2,279 שמות ייחודיים
 - 🔄 Nikud pending (run workflow)
+=======
+# nikud-vocabulary2
+Public
+>>>>>>> cc774313849fadd5e144a02fcd9f17cabeee9c93
