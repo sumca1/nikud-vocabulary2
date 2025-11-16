@@ -1,0 +1,42 @@
+name: Add Nikud to Vocabulary
+
+on:
+  workflow_dispatch:  # ניתן להריץ ידנית
+  push:
+    paths:
+      - 'vocabulary_expanded.txt'
+
+jobs:
+  add-nikud:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install requests
+    
+    - name: Run nikud script
+      run: |
+        python nikud_for_github.py
+    
+    - name: Upload result
+      uses: actions/upload-artifact@v4
+      with:
+        name: vocabulary-with-nikud
+        path: vocabulary_expanded_nikud.txt
+        retention-days: 7
+    
+    - name: Commit and push if changed
+      run: |
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'actions@github.com'
+        git add vocabulary_expanded_nikud.txt
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Add nikud to vocabulary" && git push)
